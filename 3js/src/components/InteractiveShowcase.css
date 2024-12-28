@@ -1,0 +1,31 @@
+.showcase-container {
+  min-height: 100vh;
+  position: relative;
+  padding: 4rem 0;
+  overflow: hidden;
+}
+
+.showcase-content {
+  position: relative;
+  z-index: 1;
+}
+
+.showcase-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.showcase-description {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .showcase-title {
+    font-size: 2rem;
+  }
+} 

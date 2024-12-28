@@ -1,37 +1,33 @@
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
+import { useRef } from 'react';
+import { Group } from 'three';
+
+// Import the model directly
+import modelPath from '../assets/models/scene.gltf?url'
 
 export default function ToadModel() {
-  const toadRef = useRef<THREE.Group>();
-  const [modelPath] = useState(() => {
-    const modelUrl = new URL('../assets/models/scene.gltf', import.meta.url).href;
-    return modelUrl;
-  });
+  const toadRef = useRef<Group>(null);
   
-  try {
-    const { scene } = useGLTF(modelPath);
+  // Use the imported model path
+  const { scene } = useGLTF(modelPath);
+  
+  useFrame((state) => {
+    if (toadRef.current) {
+      toadRef.current.rotation.y += 0.003;
+      toadRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+    }
+  });
 
-    useFrame((state) => {
-      if (toadRef.current) {
-        toadRef.current.rotation.y += 0.003;
-        toadRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
-        toadRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
-      }
-    });
-
-    return <primitive ref={toadRef} object={scene} scale={2.5} position={[0, 0, 0]} />;
-  } catch (error) {
-    console.error('Error loading model:', error);
-    return null;
-  }
+  return (
+    <primitive 
+      ref={toadRef}
+      object={scene} 
+      scale={0.5}
+      position={[0, 0, 0]}
+    />
+  );
 }
 
-// Pre-load the model
-try {
-  const modelUrl = new URL('../assets/models/scene.gltf', import.meta.url).href;
-  useGLTF.preload(modelUrl);
-} catch (error) {
-  console.error('Error preloading model:', error);
-} 
+// Preload with the same path
+useGLTF.preload(modelPath); 

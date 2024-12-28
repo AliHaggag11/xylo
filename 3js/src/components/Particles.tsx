@@ -1,43 +1,42 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
-export default function Particles({ count = 200 }) {
-  const mesh = useRef();
-  const [positions] = useState(() => {
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 15;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
-    }
-    return positions;
-  });
+interface ParticlesProps {
+  count: number;
+}
 
-  useFrame((state) => {
-    if (mesh.current) {
-      mesh.current.rotation.y += 0.001;
-      mesh.current.rotation.x += 0.001;
+const Particles = ({ count }: ParticlesProps) => {
+  // Create a properly typed ref for Points
+  const points = useRef<THREE.Points>(null);
+  
+  // Generate random positions for particles
+  const positions = new Float32Array(
+    Array.from({ length: count * 3 }, () => (Math.random() - 0.5) * 10)
+  );
+
+  useFrame((_state, delta) => {
+    if (points.current) {
+      points.current.rotation.x += delta * 0.1;
+      points.current.rotation.y += delta * 0.1;
     }
   });
 
   return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        color="#00ff00"
+    <Points
+      ref={points}
+      positions={positions}
+    >
+      <PointMaterial
         transparent
-        opacity={0.6}
-        sizeAttenuation
+        color="#88ff88"
+        size={0.05}
+        sizeAttenuation={true}
+        depthWrite={false}
       />
-    </points>
+    </Points>
   );
-} 
+};
+
+export default Particles; 

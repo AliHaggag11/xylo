@@ -1,286 +1,207 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { FaGithub, FaTwitter, FaLinkedin, FaDiscord } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 
-const socialLinks = [
-  { name: 'GitHub', url: '#', icon: <FaGithub /> },
-  { name: 'Twitter', url: '#', icon: <FaTwitter /> },
-  { name: 'LinkedIn', url: '#', icon: <FaLinkedin /> },
-  { name: 'Discord', url: '#', icon: <FaDiscord /> }
-];
-
-const footerLinks = [
-  { name: 'About', url: '#' },
-  { name: 'Features', url: '#' },
-  { name: 'Documentation', url: '#' },
-  { name: 'Contact', url: '#' }
-];
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 }
+};
 
 export default function Footer() {
-  const { scrollYProgress } = useScroll();
-  const opacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
-  const y = useTransform(scrollYProgress, [0.8, 1], [50, 0]);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   return (
-    <footer className="relative overflow-hidden">
-      {/* Alien Tech Background */}
-      <div className="absolute inset-0 bg-[#000a05]">
-        {/* Hexagonal Grid */}
-        <div 
-          className="absolute inset-0 opacity-10"
+    <footer className="relative bg-black/50 backdrop-blur-sm border-t border-[#00ff00]/10 overflow-hidden">
+      {/* Animated grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
+      
+      {/* Glowing orbs */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-64 h-64 rounded-full"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' stroke-width='2' stroke='%2300ff00' fill='none'/%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
+            background: `radial-gradient(circle at center, rgba(0,255,0,0.${i + 1}) 0%, transparent 70%)`,
+            left: `${25 * (i + 1)}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [20, -20, 20],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 5 + i,
+            repeat: Infinity,
+            ease: "easeInOut",
           }}
         />
-        {/* Glowing Orbs */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-[200px] h-[200px] rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(0,255,0,0.1) 0%, transparent 70%)',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              filter: 'blur(40px)',
-              animation: `float ${10 + i * 2}s infinite ease-in-out ${i * 1.5}s`
-            }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#000a05] via-transparent to-[#000a05]/90" />
-      </div>
+      ))}
 
-      {/* Alien Tech Border */}
-      <div className="relative border-t border-[#00ff00]/20">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#00ff00]/30 to-transparent" />
-        {/* Multiple scanning lines with different speeds and directions */}
-        {[...Array(3)].map((_, i) => (
-          <div 
-            key={i}
-            className="w-20 h-px absolute -top-px"
-            style={{
-              background: `linear-gradient(90deg, transparent, rgba(0,255,0,${0.3 + i * 0.2}), transparent)`,
-              animation: `moveRight ${4 + i * 2}s linear infinite ${i * 1.5}s`,
-              left: i % 2 === 0 ? '0' : 'auto',
-              right: i % 2 === 0 ? 'auto' : '0',
-              transform: i % 2 === 0 ? 'none' : 'rotate(180deg)'
-            }}
-          />
-        ))}
-      </div>
-
-      <motion.div 
-        style={{ opacity, y }}
-        className="relative max-w-7xl mx-auto py-16 px-4"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Logo Section with Enhanced Animations */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="relative group"
+      <div className="relative container mx-auto px-4 py-12">
+        <motion.div 
+          className="grid md:grid-cols-4 gap-8"
+          variants={{
+            animate: { transition: { staggerChildren: 0.1 } }
+          }}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+        >
+          {/* Company Info */}
+          <motion.div 
+            className="space-y-4"
+            variants={fadeInUp}
           >
-            <motion.div 
-              animate={{ 
-                boxShadow: ['0 0 0 rgba(0,255,0,0.2)', '0 0 30px rgba(0,255,0,0.2)', '0 0 0 rgba(0,255,0,0.2)']
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="space-y-4 p-6 rounded-lg bg-black/20 backdrop-blur-sm border border-[#00ff00]/20
-                       hover:border-[#00ff00]/40 transition-all duration-500"
-            >
-              {/* Animated Corner Accents */}
-              {['-top-1 -left-1', '-top-1 -right-1', '-bottom-1 -left-1', '-bottom-1 -right-1'].map((position, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: i * 0.1, type: "spring", stiffness: 200 }}
-                  className={`absolute ${position} w-6 h-6 border-2 border-[#00ff00]/40`}
-                  style={{
-                    borderTopWidth: i < 2 ? '2px' : '0',
-                    borderRightWidth: i % 2 === 1 ? '2px' : '0',
-                    borderBottomWidth: i >= 2 ? '2px' : '0',
-                    borderLeftWidth: i % 2 === 0 ? '2px' : '0'
-                  }}
-                />
-              ))}
-              
-              <h3 className="text-3xl font-orbitron bg-clip-text text-transparent 
-                          bg-gradient-to-r from-[#00ff00] to-[#00cc00]
-                          group-hover:from-[#00ff00] group-hover:to-[#00ff00]
-                          transition-all duration-300 relative">
-                <motion.span 
-                  className="absolute -left-4 top-1/2 w-2 h-2 bg-[#00ff00]/50 rounded-full"
-                  animate={{ 
-                    scale: [1, 1.5, 1],
-                    opacity: [0.5, 1, 0.5]
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-                Xylo
-              </h3>
-              <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
-                Advancing the future of robotics through biomimetic innovation.
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Social Links with Enhanced Animations */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-6"
-          >
-            <h4 className="text-xl font-orbitron text-[#00ff00]/80 flex items-center gap-2">
-              <motion.span 
-                className="w-1 h-1 bg-[#00ff00] rounded-full"
-                animate={{ 
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
+            <div className="relative inline-block">
+              <motion.div
+                className="absolute -inset-2 bg-gradient-to-r from-[#00ff00]/20 to-transparent blur-xl"
+                animate={{
+                  opacity: [0.5, 1, 0.5],
                 }}
-                transition={{ 
-                  duration: 1.5,
+                transition={{
+                  duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
               />
-              Connect
-            </h4>
-            <div className="flex space-x-6">
-              {socialLinks.map((link, index) => (
-                <motion.a
-                  key={link.name}
-                  href={link.url}
-                  className="relative group"
-                  aria-label={link.name}
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <motion.div 
-                    className="absolute inset-0 bg-[#00ff00]/20 rounded-full blur-xl opacity-0 
-                             group-hover:opacity-100 transition-opacity duration-300"
-                    animate={{ 
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  <div className="relative text-2xl text-gray-400 hover:text-[#00ff00] 
-                               transition-colors duration-300
-                               p-3 rounded-lg bg-black/20 backdrop-blur-sm border border-[#00ff00]/20
-                               group-hover:border-[#00ff00]/40">
-                    {link.icon}
-                  </div>
-                </motion.a>
-              ))}
+              <h3 className="text-[#00ff00] font-orbitron text-2xl relative">XYLO</h3>
             </div>
+            <p className="text-gray-400 backdrop-blur-sm bg-black/20 p-4 rounded-lg border border-[#00ff00]/10">
+              Advancing the future through quantum computing and AI innovation.
+            </p>
           </motion.div>
 
-          {/* Quick Links with Enhanced Animations */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-6"
+          {/* Quick Links */}
+          <motion.div 
+            className="space-y-4"
+            variants={fadeInUp}
           >
-            <h4 className="text-xl font-orbitron text-[#00ff00]/80 flex items-center gap-2">
-              <motion.span 
-                className="w-1 h-1 bg-[#00ff00] rounded-full"
-                animate={{ 
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{ 
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
+            <h4 className="text-[#00ff00] font-mono flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-[#00ff00] rounded-full animate-pulse" />
               Quick Links
             </h4>
-            <ul className="space-y-3">
-              {footerLinks.map((link, index) => (
+            <ul className="space-y-2">
+              {['About', 'Features', 'Documentation', 'Blog'].map((item, index) => (
                 <motion.li 
-                  key={link.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 * index }}
+                  key={item}
+                  onHoverStart={() => setHoverIndex(index)}
+                  onHoverEnd={() => setHoverIndex(null)}
+                  className="relative"
                 >
-                  <motion.a
-                    href={link.url}
-                    className="relative group flex items-center text-gray-400 hover:text-[#00ff00] 
-                             transition-colors duration-300 p-2"
-                    whileHover={{ x: 10 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  <a 
+                    href="#" 
+                    className="text-gray-400 hover:text-[#00ff00] transition-colors duration-300 flex items-center gap-2"
                   >
-                    <motion.span 
-                      className="absolute inset-0 bg-[#00ff00]/5 opacity-0 group-hover:opacity-100 
-                               transition-opacity duration-300" 
-                    />
-                    <motion.span 
-                      className="absolute left-0 w-0 h-full bg-[#00ff00]/10
-                               group-hover:w-full transition-all duration-300"
-                    />
-                    <span className="relative flex items-center gap-2">
-                      <motion.span 
-                        className="w-1 h-1 bg-[#00ff00]/50 rounded-full"
-                        animate={{ 
-                          scale: [1, 1.5, 1],
-                          opacity: [0.3, 0.7, 0.3]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: index * 0.2
-                        }}
+                    {hoverIndex === index && (
+                      <motion.div
+                        layoutId="hover"
+                        className="absolute inset-0 bg-[#00ff00]/10 rounded"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                       />
-                      {link.name}
+                    )}
+                    <span className="relative">
+                      {item}
                     </span>
-                  </motion.a>
+                  </a>
                 </motion.li>
               ))}
             </ul>
           </motion.div>
-        </div>
 
-        {/* Copyright Section with Enhanced Animation */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="relative mt-16 pt-8 border-t border-[#00ff00]/10"
-        >
+          {/* Resources */}
           <motion.div 
-            className="absolute top-0 left-0 w-full h-px"
-            style={{
-              background: 'linear-gradient(90deg, transparent, rgba(0,255,0,0.2), transparent)'
-            }}
-            animate={{
-              backgroundPosition: ['200% 0', '-200% 0']
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-          <p className="text-center text-gray-500 font-orbitron">
-            &copy; {new Date().getFullYear()} Xylo. All rights reserved.
-          </p>
+            className="space-y-4"
+            variants={fadeInUp}
+          >
+            <h4 className="text-[#00ff00] font-mono flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-[#00ff00] rounded-full animate-pulse" />
+              Resources
+            </h4>
+            <ul className="space-y-2">
+              {['Support', 'Partners', 'Community', 'Contact'].map((item, index) => (
+                <motion.li 
+                  key={item}
+                  onHoverStart={() => setHoverIndex(index + 4)}
+                  onHoverEnd={() => setHoverIndex(null)}
+                  className="relative"
+                >
+                  <a 
+                    href="#" 
+                    className="text-gray-400 hover:text-[#00ff00] transition-colors duration-300 flex items-center gap-2"
+                  >
+                    {hoverIndex === index + 4 && (
+                      <motion.div
+                        layoutId="hover"
+                        className="absolute inset-0 bg-[#00ff00]/10 rounded"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      />
+                    )}
+                    <span className="relative">
+                      {item}
+                    </span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Newsletter */}
+          <motion.div 
+            className="space-y-4"
+            variants={fadeInUp}
+          >
+            <h4 className="text-[#00ff00] font-mono flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-[#00ff00] rounded-full animate-pulse" />
+              Neural Link
+            </h4>
+            <p className="text-gray-400">Connect to our quantum network</p>
+            <div className="relative">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full bg-black/30 border border-[#00ff00]/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00ff00] pr-24"
+              />
+              <button className="absolute right-1 top-1 bg-[#00ff00] text-black px-4 py-1 rounded-md hover:bg-[#00cc00] transition-colors duration-300 group">
+                <span className="relative z-10">Link</span>
+                <motion.div
+                  className="absolute inset-0 rounded-md bg-[#00ff00]/40"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </button>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
+
+        {/* Bottom Bar */}
+        <motion.div 
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="mt-12 pt-8 border-t border-[#00ff00]/10"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-400 font-mono">
+              <span className="text-[#00ff00]">&gt;</span> © 2024 XYLO_CORP v2.4.1
+            </p>
+            <div className="flex gap-6">
+              {['Privacy Protocol', 'Terms of Operation', 'Security Policy'].map((item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-gray-400 hover:text-[#00ff00] transition-colors duration-300 font-mono text-sm"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </footer>
   );
 } 

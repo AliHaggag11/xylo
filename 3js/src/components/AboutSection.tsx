@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import './AboutSection.css';  // Create this file for your styles
 
 const timeline = [
   {
@@ -196,12 +197,14 @@ export default function AboutSection() {
       <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00]/30 to-transparent" />
 
       {/* Add this to your global CSS */}
-      <style jsx global>{`
-        @keyframes floatAnimation {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(30px, -30px); }
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes floatAnimation {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+          }
+        `
+      }} />
     </section>
   );
 } 
