@@ -1,7 +1,7 @@
-import React from 'react';
+import type { FC } from 'react';
 import './InteractiveShowcase.css';
 
-export default function InteractiveShowcase() {
+const InteractiveShowcase: FC = () => {
   return (
     <section className="showcase-container">
       <div className="showcase-content">
@@ -12,4 +12,6 @@ export default function InteractiveShowcase() {
       </div>
     </section>
   );
-} 
+};
+
+export default InteractiveShowcase; 
