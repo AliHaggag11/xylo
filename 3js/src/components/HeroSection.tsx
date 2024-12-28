@@ -51,7 +51,7 @@ const icons = {
 };
 
 function Model() {
-  const { scene } = useGLTF('/src/assets/models/scene.gltf');
+  const { scene } = useGLTF('/models/scene.gltf');
   return <primitive 
     object={scene} 
     scale={0.25}
