@@ -178,11 +178,11 @@ export default function HeroSection() {
           </div>
 
           {/* Right Column - 3D Model Display */}
-          <motion.div
-            variants={fadeInUp}
-            initial="initial"
-            animate="animate"
-            transition={{ duration: 0.6, delay: 0.6 }}
+            <motion.div
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 0.6, delay: 0.6 }}
             className="relative h-[600px] rounded-2xl overflow-hidden group"
           >
             {/* Animated corner accents */}
@@ -324,19 +324,19 @@ export default function HeroSection() {
                     <div className="h-20 bg-gradient-to-b from-[#00ff00]/5 to-transparent" />
                   </motion.div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
+              <div className="grid grid-cols-2 gap-4">
+                {[
                       { label: 'Processing Power', value: '1.21 PetaFLOPS', icon: icons.processing },
                       { label: 'Quantum States', value: '1024 Qubits', icon: icons.quantum },
                       { label: 'Response Time', value: '0.001ms', icon: icons.response },
                       { label: 'Learning Rate', value: '99.99%', icon: icons.learning }
-                    ].map((stat, index) => (
-                      <motion.div
-                        key={stat.label}
-                        variants={fadeInUp}
-                        initial="initial"
-                        animate="animate"
-                        transition={{ duration: 0.6, delay: 0.2 * index }}
+                ].map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    variants={fadeInUp}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ duration: 0.6, delay: 0.2 * index }}
                         className="group relative"
                       >
                         {/* Card Background */}
@@ -370,13 +370,13 @@ export default function HeroSection() {
                           <div className="absolute inset-0 bg-gradient-to-r from-[#00ff00]/5 to-transparent rounded-lg blur-sm" />
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#00ff00]/5" />
                         </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                  </motion.div>
+                ))}
+              </div>
                 </div>
               </div>
             </div>
-          </motion.div>
+            </motion.div>
         </div>
       </div>
 
