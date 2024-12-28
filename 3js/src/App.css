@@ -1,0 +1,117 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.neon-text {
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+}
+
+.neon-button {
+  @apply px-8 py-3 rounded-lg bg-transparent border-2 border-[#00ff00] text-[#00ff00] transition-all duration-300;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+.neon-button:hover {
+  @apply bg-[#00ff00] text-black;
+  box-shadow: 0 0 20px #00ff00;
+}
+
+.cyber-bg {
+  background: linear-gradient(45deg, #000000, #001a1a);
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 255, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translate(0, 0); 
+  }
+  50% { 
+    transform: translate(20px, -20px); 
+  }
+}
+
+@keyframes moveRight {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100vw); 
+  }
+}
+
+/* Add these to your existing styles */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Adjust container padding for mobile */
+@media (max-width: 640px) {
+  .container {
+    @apply px-4;
+  }
+}
+
+/* Ensure all sections are contained */
+section {
+  @apply w-full overflow-x-hidden;
+}
+
+/* Adjust grid layouts for mobile */
+@media (max-width: 768px) {
+  .grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* Ensure images and canvases don't overflow */
+img, canvas {
+  @apply max-w-full;
+}
+
+/* Adjust font sizes for mobile */
+@media (max-width: 640px) {
+  .text-7xl {
+    @apply text-5xl;
+  }
+  .text-6xl {
+    @apply text-4xl;
+  }
+  .text-5xl {
+    @apply text-3xl;
+  }
+  .text-4xl {
+    @apply text-2xl;
+  }
+  .text-3xl {
+    @apply text-xl;
+  }
+  .text-2xl {
+    @apply text-lg;
+  }
+}
+
+/* Adjust padding and margins for mobile */
+@media (max-width: 640px) {
+  .py-32 {
+    @apply py-16;
+  }
+  .px-8 {
+    @apply px-4;
+  }
+  .gap-12 {
+    @apply gap-6;
+  }
+}
