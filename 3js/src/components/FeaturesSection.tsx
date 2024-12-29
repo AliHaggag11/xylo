@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './FeaturesSection.css';
 
 const features = [
@@ -95,7 +95,6 @@ const fadeInUp = {
 // Add this new function for the counting animation like in HeroSection
 
 export default function FeaturesSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   // Add mouse movement effect from HeroSection
@@ -112,7 +111,7 @@ export default function FeaturesSection() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative py-32 bg-black min-h-screen overflow-hidden">
+    <section id="features" className="relative py-32 bg-black min-h-screen overflow-hidden">
       {/* Updated Background Elements to match HeroSection style */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.03)_0%,transparent_70%)]" />

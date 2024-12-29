@@ -68,7 +68,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen bg-[#020f02] overflow-hidden">
+    <section id="hero" className="relative min-h-screen bg-[#020f02] overflow-hidden">
       {/* Updated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.1)_0%,transparent_70%)]" />
@@ -280,7 +280,7 @@ export default function HeroSection() {
                 <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
                 
                 <div className="bg-black/40 backdrop-blur-md">
-                  <div className="grid grid-cols-2 gap-4 p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-2 sm:gap-4 p-4 sm:p-6">
                     {[
                       { 
                         label: 'Processing Power',
@@ -344,17 +344,17 @@ export default function HeroSection() {
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 via-green-500/10 to-green-500/20 rounded-lg" />
                         
-                        <div className="relative flex items-center gap-4 p-4 bg-black/40 m-[1px] rounded-[7px]">
+                        <div className="relative flex items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-black/40 m-[1px] rounded-[7px]">
                           <div className="relative">
                             <div className="absolute inset-0 bg-green-500/20 blur-sm rounded-full" />
-                            <div className="relative w-10 h-10 rounded-full bg-black/40 border border-green-500/30 flex items-center justify-center text-green-500">
+                            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 border border-green-500/30 flex items-center justify-center text-green-500">
                               {stat.icon}
                             </div>
                           </div>
 
                           <div>
-                            <p className="text-green-500/70 text-xs font-mono tracking-wider">{stat.label}</p>
-                            <p className="text-white font-bold tracking-wide font-mono">
+                            <p className="text-green-500/70 text-[10px] sm:text-xs font-mono tracking-wider">{stat.label}</p>
+                            <p className="text-white font-bold tracking-wide font-mono text-sm sm:text-base">
                               {useCountUp(stat.countTo, 2, stat.decimals)}{stat.suffix}
                             </p>
                           </div>

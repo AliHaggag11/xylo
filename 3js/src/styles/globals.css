@@ -1,0 +1,37 @@
+/* Hide default cursor everywhere */
+* {
+  cursor: none !important;
+}
+
+/* Show default cursor for touch devices */
+@media (hover: none) {
+  * {
+    cursor: auto !important;
+  }
+  
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+/* Ensure no default cursor shows on interactive elements */
+a, button, input, textarea, select, [role="button"],
+a *, button *, [role="button"] * {
+  cursor: none !important;
+}
+
+/* Prevent cursor from showing during text selection */
+::selection {
+  cursor: none !important;
+}
+
+/* Prevent cursor from showing when dragging */
+* {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Allow text selection only for text elements */
+p, h1, h2, h3, h4, h5, h6, span, input, textarea {
+  user-select: text;
+} 

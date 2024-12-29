@@ -36,7 +36,7 @@ export default function AboutSection() {
   const bgScale = useTransform(scrollYProgress, [0, 0.5], [1.1, 1]);
 
   return (
-    <section ref={containerRef} className="relative py-32 min-h-screen overflow-hidden bg-[#020f02]">
+    <section id="about" className="relative py-32 min-h-screen overflow-hidden bg-[#020f02]">
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0">
         <motion.div 
