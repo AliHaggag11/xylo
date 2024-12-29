@@ -166,12 +166,14 @@ export default function FeaturesSection() {
               ADVANCED CAPABILITIES
             </motion.span>
           </div>
-          <h2 className="text-8xl font-bold mb-6">
+          <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-emerald-500">
               Features
             </span>
           </h2>
-          <p className="text-green-400 text-xl font-mono">NEXT-GEN QUANTUM TECHNOLOGY</p>
+          <p className="text-green-400 text-base sm:text-lg md:text-xl font-mono">
+            NEXT-GEN QUANTUM TECHNOLOGY
+          </p>
         </motion.div>
 
         {/* Features Grid */}
