@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 import './FeaturesSection.css';
 
 const features = [
@@ -86,222 +86,233 @@ const features = [
   }
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.2,
-      duration: 0.8,
-      ease: [0.215, 0.610, 0.355, 1.000]
-    }
-  })
+// Add the same fade animation from HeroSection
+const fadeInUp = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 }
 };
+
+// Add this new function for the counting animation like in HeroSection
 
 export default function FeaturesSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start']
-  });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.1, 0.3]);
-  const gridScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+  // Add mouse movement effect from HeroSection
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 20,
+        y: (e.clientY / window.innerHeight) * 20
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <section ref={containerRef} className="relative py-32 bg-black min-h-screen">
-      {/* Animated Grid Background */}
-      <motion.div 
-        className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.05)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,255,0,0.05)_1.5px,transparent_1.5px)]"
-        style={{
-          backgroundSize: '30px 30px',
-          opacity: gridOpacity,
-          scale: gridScale
-        }}
-      />
-
-      <div className="relative max-w-7xl mx-auto px-4">
-        {/* Section Header */}
+    <section ref={containerRef} className="relative py-32 bg-black min-h-screen overflow-hidden">
+      {/* Updated Background Elements to match HeroSection style */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.03)_0%,transparent_70%)]" />
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.02)_1px,transparent_1px)]"
+          style={{ 
+            backgroundSize: '60px 60px',
+            transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`
+          }}
+        />
+      </div>
+
+      {/* Floating Elements from HeroSection */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-[500px] h-[500px] rounded-full"
+          style={{
+            background: `radial-gradient(circle at center, rgba(0,255,0,0.${i + 1}) 0%, transparent 60%)`,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 5 + i,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.5,
+          }}
+        />
+      ))}
+
+      <div className="relative z-10 container mx-auto px-4">
+        {/* Section Header with HeroSection styling */}
+        <motion.div
+          variants={fadeInUp}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-5xl md:text-6xl font-orbitron font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00ff00] via-[#00cc00] to-[#00ff00] mb-6">
-            Quantum Features
+          <div className="inline-block mb-4">
+            <motion.span 
+              className="text-sm font-mono text-green-500 tracking-wider bg-green-500/10 px-4 py-2 rounded-full"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              ADVANCED CAPABILITIES
+            </motion.span>
+          </div>
+          <h2 className="text-8xl font-bold mb-6">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-emerald-500">
+              Features
+            </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Pushing the boundaries of what's possible with next-generation quantum technology
-          </p>
+          <p className="text-green-400 text-xl font-mono">NEXT-GEN QUANTUM TECHNOLOGY</p>
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              custom={index}
-              initial="hidden"
-              whileInView="visible"
+              variants={fadeInUp}
+              initial="initial"
+              whileInView="animate"
               viewport={{ once: true }}
-              variants={cardVariants}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
             >
               {/* Feature Card */}
-              <div className="relative group h-[400px]">
-                {/* Glass Card */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60 
-                             backdrop-blur-sm rounded-2xl transition-all duration-500
-                             group-hover:bg-gradient-to-b group-hover:from-black/50 group-hover:to-black/70">
-                  {/* Animated Lines */}
-                  <div className="absolute inset-0 overflow-hidden rounded-2xl">
-                    {/* Horizontal Lines */}
-                    {[...Array(5)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute h-px w-full bg-[#00ff00]/10"
-                        style={{
-                          top: `${20 * (i + 1)}%`,
-                          left: 0,
-                          transform: 'translateX(-100%)',
-                          animation: `slideRight 3s ${i * 0.2}s infinite linear`
-                        }}
-                      />
-                    ))}
-                    {/* Vertical Lines */}
-                    {[...Array(3)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-px h-full bg-[#00ff00]/10"
-                        style={{
-                          left: `${33.33 * (i + 1)}%`,
-                          top: 0,
-                          transform: 'translateY(-100%)',
-                          animation: `slideDown 3s ${i * 0.2}s infinite linear`
-                        }}
-                      />
-                    ))}
-                  </div>
+              <div className="group relative h-[420px] bg-[#020a02]/40 backdrop-blur-md rounded-xl 
+                             border border-green-500/10 overflow-hidden hover:border-green-500/30 
+                             transition-colors duration-500">
+                {/* Background Effects */}
+                <div className="absolute inset-0">
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-green-500/[0.02] to-transparent opacity-0 
+                                 group-hover:opacity-100 transition-opacity duration-700" />
+                  
+                  {/* Animated Grid */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.01)_1px,transparent_1px)] 
+                                 bg-[size:20px_20px] [mask-image:radial-gradient(black,transparent_90%)]" />
+
+                  {/* Scan Line */}
+                  <motion.div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={false}
+                    animate={{ 
+                      background: [
+                        'linear-gradient(to bottom, transparent 0%, rgba(0,255,0,0.05) 50%, transparent 100%) 0 0/100% 200%',
+                        'linear-gradient(to bottom, transparent 0%, rgba(0,255,0,0.05) 50%, transparent 100%) 0 -200%/100% 200%'
+                      ]
+                    }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  />
                 </div>
 
-                {/* Content Container */}
+                {/* Card Content */}
                 <div className="relative h-full p-8 flex flex-col">
                   {/* Icon Container */}
-                  <div className="relative mb-6 flex justify-center items-center">
-                    {/* Glow Effect */}
-                    <div className="absolute w-24 h-24 bg-[#00ff00]/5 blur-3xl rounded-full
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    
-                    {/* Icon Wrapper - Fixed Position */}
-                    <div className="relative w-12 h-12 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-black/20 rounded-xl" />
-                      <div className="relative transform-gpu transition-all duration-500
-                                    group-hover:rotate-12">
+                  <div className="relative mb-6">
+                    <div className="absolute -inset-2 bg-green-500/10 rounded-full blur-xl opacity-0 
+                                   group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative w-14 h-14 flex items-center justify-center bg-black/30 
+                                   rounded-xl border border-green-500/20 group-hover:border-green-500/40 
+                                   transition-colors duration-300">
+                      <div className="transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                         {feature.icon}
                       </div>
                     </div>
                   </div>
 
-                  {/* Text Content */}
-                  <div className="flex-grow">
-                    <h3 className="text-2xl font-orbitron mb-4 tracking-wider
-                               bg-clip-text text-transparent bg-gradient-to-r 
-                               from-white to-gray-400 group-hover:from-[#00ff00] group-hover:to-white
-                               transition-all duration-500">
+                  {/* Title */}
+                  <div className="relative">
+                    <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r 
+                                  from-green-500 to-emerald-400 pb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-400 mb-6 leading-relaxed tracking-wide
-                               group-hover:text-gray-300 transition-colors duration-500">
-                      {feature.description}
-                    </p>
+                    <div className="h-px w-12 bg-gradient-to-r from-green-500/50 to-transparent 
+                                   group-hover:w-full transition-all duration-700 ease-out" />
                   </div>
+
+                  {/* Description */}
+                  <p className="mt-4 text-gray-400/90 leading-relaxed">
+                    {feature.description}
+                  </p>
 
                   {/* Stats Container */}
-                  <div className="space-y-3 relative">
+                  <div className="mt-auto pt-6 space-y-3">
                     {feature.stats.map((stat, i) => (
-                      <div 
+                      <motion.div
                         key={i}
-                        className="relative overflow-hidden"
+                        className="relative"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 + (i * 0.1) }}
                       >
-                        {/* Stat Background */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#00ff00]/5 to-transparent
-                                     transform -skew-x-12" />
-                        <div className="relative p-3 flex items-center space-x-3">
-                          {/* Stat Icon */}
-                          <div className="w-2 h-2 rounded-full bg-[#00ff00]/40
-                                       group-hover:bg-[#00ff00] transition-colors duration-500" />
-                          {/* Stat Text */}
-                          <p className="font-mono text-sm text-[#00ff00] tracking-wider">
-                            {stat}
-                          </p>
+                        <div className="relative overflow-hidden">
+                          {/* Stat Background */}
+                          <div className="absolute inset-0 bg-green-500/[0.02] rounded-lg" />
+                          
+                          {/* Stat Content */}
+                          <div className="relative px-4 py-2 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <motion.div 
+                                className="w-1.5 h-1.5 rounded-full bg-green-500/40"
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+                              />
+                              <span className="font-mono text-sm text-green-500/80 tracking-wide">
+                                {stat}
+                              </span>
+                            </div>
+                            <div className="flex space-x-0.5">
+                              {[...Array(3)].map((_, j) => (
+                                <motion.div
+                                  key={j}
+                                  className="w-0.5 h-2 bg-green-500/30 rounded-full"
+                                  animate={{ scaleY: [0.3, 1, 0.3] }}
+                                  transition={{ 
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                    delay: j * 0.2
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
-                </div>
 
-                {/* Hover Effects */}
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 
-                             transition-opacity duration-500 pointer-events-none">
-                  {/* Corner Accents */}
-                  <div className="absolute top-0 right-0 w-16 h-16">
-                    <div className="absolute top-4 right-4 w-full h-full border-t-2 border-r-2 
-                                 border-[#00ff00]/20 rounded-tr-2xl" />
+                  {/* Corner Decorations */}
+                  <div className="absolute top-0 right-0 w-24 h-24">
+                    <div className="absolute top-3 right-3 w-full h-full border-t border-r 
+                                   border-green-500/20 rounded-tr-xl" />
                   </div>
-                  <div className="absolute bottom-0 left-0 w-16 h-16">
-                    <div className="absolute bottom-4 left-4 w-full h-full border-b-2 border-l-2 
-                                 border-[#00ff00]/20 rounded-bl-2xl" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24">
+                    <div className="absolute bottom-3 left-3 w-full h-full border-b border-l 
+                                   border-green-500/20 rounded-bl-xl" />
                   </div>
 
-                  {/* Scan Line */}
-                  <div className="absolute inset-0 overflow-hidden">
-                    <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#00ff00]/50 to-transparent
-                                 absolute top-0 animate-scanline" />
-                  </div>
+                  {/* Edge Highlights */}
+                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r 
+                                 from-green-500/50 via-green-500/10 to-transparent" />
+                  <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l 
+                                 from-green-500/50 via-green-500/10 to-transparent" />
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-24"
-        >
-          <button className="px-8 py-4 bg-[#00ff00] text-black font-bold rounded-full hover:bg-[#00cc00] transition-colors duration-300
-                           relative overflow-hidden group">
-            <span className="relative z-10">Explore All Features</span>
-            <div className="absolute inset-0 bg-[#00cc00] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-          </button>
-        </motion.div>
+        {/* Bottom accent from HeroSection */}
+        <div className="mt-24 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#00ff00]/20 to-transparent" />
-
-      {/* Add these animations to your global CSS */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @keyframes slideRight {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          
-          @keyframes slideDown {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-          }
-          
-          @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(200%); }
-          }
-        `
-      }} />
     </section>
   );
 } 
