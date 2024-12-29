@@ -8,18 +8,65 @@ const features = [
     description: 'Advanced quantum computing core enables parallel processing across multiple dimensions.',
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none">
+        {/* Outer rotating hexagon */}
         <motion.path
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, repeat: Infinity }}
-          d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+          d="M12 2L4 6.5V17.5L12 22L20 17.5V6.5L12 2Z"
+          stroke="currentColor"
+          strokeWidth="1"
+          className="stroke-[#00ff00]/30"
+          initial={{ rotate: 0 }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        />
+        
+        {/* Inner hexagon with drawing animation */}
+        <motion.path
+          d="M12 4L6 7.5V14.5L12 18L18 14.5V7.5L12 4Z"
           stroke="currentColor"
           strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
           className="stroke-[#00ff00]"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         />
-        <circle cx="12" cy="12" r="3" className="fill-[#00ff00]/20" />
+        
+        {/* Center circle with pulse */}
+        <motion.circle 
+          cx="12" 
+          cy="11" 
+          r="2"
+          className="fill-[#00ff00]/20 stroke-[#00ff00]"
+          strokeWidth="1"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        
+        {/* Quantum particles */}
+        {[...Array(3)].map((_, i) => (
+          <motion.circle
+            key={i}
+            cx="12"
+            cy="11"
+            r="4"
+            className="stroke-[#00ff00]/30"
+            strokeWidth="1"
+            fill="none"
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [0.1, 0.3, 0.1],
+              rotate: 360,
+            }}
+            transition={{
+              duration: 3,
+              delay: i * 0.5,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
       </svg>
     ),
     stats: ['1024 Qubits', '99.9% Accuracy']
@@ -29,26 +76,63 @@ const features = [
     description: 'Self-evolving neural architecture with dynamic learning capabilities.',
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none">
+        {/* Background grid */}
         <motion.path
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, repeat: Infinity }}
-          d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="stroke-[#00ff00]"
+          d="M3 3h18v18H3V3z"
+          className="stroke-[#00ff00]/10"
+          strokeWidth="0.5"
+          strokeDasharray="2 2"
+          animate={{
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear"
+          }}
         />
-        <path
-          d="M12 8v8M8 12h8"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="stroke-[#00ff00]"
-        />
-        <circle cx="12" cy="12" r="6" className="fill-[#00ff00]/20" />
+        
+        {/* Neural connections */}
+        {[...Array(6)].map((_, i) => (
+          <motion.line
+            key={i}
+            x1={6 + (i % 2) * 12}
+            y1={6 + Math.floor(i / 2) * 6}
+            x2={18 - (i % 2) * 12}
+            y2={18 - Math.floor(i / 2) * 6}
+            className="stroke-[#00ff00]"
+            strokeWidth="1"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{
+              duration: 2,
+              delay: i * 0.2,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
+        
+        {/* Neural nodes */}
+        {[...Array(4)].map((_, i) => (
+          <motion.circle
+            key={i}
+            cx={6 + (i % 2) * 12}
+            cy={6 + Math.floor(i / 2) * 12}
+            r="2"
+            className="fill-[#00ff00]/20 stroke-[#00ff00]"
+            strokeWidth="1"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 2,
+              delay: i * 0.3,
+              repeat: Infinity,
+            }}
+          />
+        ))}
       </svg>
     ),
     stats: ['1M Parameters', '0.001ms Response']
@@ -58,27 +142,75 @@ const features = [
     description: 'Real-time environmental adaptation with predictive modeling.',
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none">
+        {/* Rotating outer ring */}
         <motion.circle
           cx="12"
           cy="12"
           r="10"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          className="stroke-[#00ff00]"
-          initial={{ rotate: 0 }}
+          className="stroke-[#00ff00]/30"
+          strokeWidth="1"
+          fill="none"
           animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         />
-        <circle cx="12" cy="12" r="4" className="fill-[#00ff00]/20" />
+        
+        {/* Adaptive system rings */}
+        {[...Array(3)].map((_, i) => (
+          <motion.circle
+            key={i}
+            cx="12"
+            cy="12"
+            r={6 + i * 2}
+            className="stroke-[#00ff00]"
+            strokeWidth="1"
+            fill="none"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2],
+              rotate: 360,
+            }}
+            transition={{
+              duration: 8 - i * 2,
+              delay: i * 0.5,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
+        
+        {/* Center system core */}
+        <motion.circle
+          cx="12"
+          cy="12"
+          r="3"
+          className="fill-[#00ff00]/20 stroke-[#00ff00]"
+          strokeWidth="1.5"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Scanning lines */}
         <motion.path
           d="M12 2v4m0 12v4m10-10h-4m-12 0H2"
-          stroke="currentColor"
+          className="stroke-[#00ff00]"
           strokeWidth="1.5"
           strokeLinecap="round"
-          className="stroke-[#00ff00]"
-          initial={{ rotate: 0 }}
-          animate={{ rotate: -360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          animate={{
+            opacity: [0.2, 1, 0.2],
+            rotate: -360,
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear"
+          }}
         />
       </svg>
     ),
