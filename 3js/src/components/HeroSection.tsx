@@ -1,54 +1,40 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
+import VideoDialog from './VideoDialog';
+
+function useCountUp(end: number, duration: number = 2, decimals: number = 0) {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    let startTime: number;
+    let requestId: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+      
+      setCount(progress * end);
+      
+      if (progress < 1) {
+        requestId = requestAnimationFrame(animate);
+      }
+    };
+
+    requestId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestId);
+  }, [end, duration]);
+
+  return decimals ? count.toFixed(decimals) : Math.floor(count);
+}
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 }
 };
 
-const glowVariants = {
-  initial: { opacity: 0.5 },
-  animate: { 
-    opacity: [0.5, 1, 0.5],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
 
-const icons = {
-  processing: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M22 12A10 10 0 1 1 12 2" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M22 2L22 8L16 8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="4" strokeWidth="1.5" />
-    </svg>
-  ),
-  quantum: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M12 3C16.9706 3 21 7.02944 21 12" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M12 21C7.02944 21 3 16.9706 3 12" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="12" cy="12" r="1" fill="currentColor" />
-      <path d="M12 12L18 6M12 12L6 18" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  ),
-  response: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M3 12C3 7.02944 7.02944 3 12 3" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M21 12C21 16.9706 16.9706 21 12 21" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M9 12L11 14L15 10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  ),
-  learning: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M3 12H7L10 19L14 5L17 12H21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-};
 
 function Model() {
   const { scene } = useGLTF('/models/scene.gltf');
@@ -62,6 +48,8 @@ function Model() {
 
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const modelRef = useRef<HTMLDivElement>(null);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -75,36 +63,40 @@ export default function HeroSection() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const scrollToModel = () => {
+    modelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   return (
-    <section className="relative min-h-screen bg-black overflow-hidden">
-      {/* Dynamic Background Elements */}
+    <section className="relative min-h-screen bg-[#020f02] overflow-hidden">
+      {/* Updated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.1)_0%,transparent_70%)]" />
         <motion.div
-          className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.05)_1px,transparent_1px)]"
+          className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)]"
           style={{ 
-            backgroundSize: '40px 40px',
+            backgroundSize: '60px 60px',
             transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`
           }}
         />
       </div>
 
-      {/* Floating Elements */}
-      {[...Array(5)].map((_, i) => (
+      {/* Updated Floating Elements */}
+      {[...Array(3)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-32 h-32 rounded-full"
+          className="absolute w-[500px] h-[500px] rounded-full"
           style={{
-            background: `radial-gradient(circle at center, rgba(0,255,0,0.${i + 1}) 0%, transparent 70%)`,
+            background: `radial-gradient(circle at center, rgba(0,255,0,0.${i + 1}) 0%, transparent 60%)`,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.3, 0.2],
           }}
           transition={{
-            duration: 3 + i,
+            duration: 5 + i,
             repeat: Infinity,
             ease: "easeInOut",
             delay: i * 0.5,
@@ -113,10 +105,10 @@ export default function HeroSection() {
       ))}
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 pt-32 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Text Content */}
-          <div className="space-y-8">
+      <div className="relative z-10 container mx-auto px-4 pt-20 pb-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Column - Updated Text Content */}
+          <div className="space-y-10">
             <motion.div
               variants={fadeInUp}
               initial="initial"
@@ -124,16 +116,21 @@ export default function HeroSection() {
               transition={{ duration: 0.6 }}
               className="relative"
             >
-              <motion.div
-                variants={glowVariants}
-                initial="initial"
-                animate="animate"
-                className="absolute -inset-4 bg-gradient-to-r from-[#00ff00]/20 to-transparent blur-xl"
-              />
-              <h1 className="text-7xl font-orbitron font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00ff00] to-[#00cc00] relative">
-                XYLO
+              <div className="inline-block">
+                <motion.span 
+                  className="text-sm font-mono text-green-500 tracking-wider bg-green-500/10 px-4 py-2 rounded-full"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  NEXT GENERATION AI
+                </motion.span>
+              </div>
+              <h1 className="mt-6 text-8xl font-bold">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-emerald-500">
+                  XYLO
+                </span>
               </h1>
-              <p className="text-[#00ff00] text-xl mt-2 font-mono relative">QUANTUM SERIES X-1</p>
+              <p className="text-green-400 text-xl mt-4 font-mono">QUANTUM SERIES X-1</p>
             </motion.div>
 
             <motion.p
@@ -141,7 +138,7 @@ export default function HeroSection() {
               initial="initial"
               animate="animate"
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-gray-300 text-lg leading-relaxed backdrop-blur-sm bg-black/30 p-6 rounded-lg border border-[#00ff00]/10"
+              className="text-gray-300 text-lg leading-relaxed max-w-xl"
             >
               Experience the next evolution in biomechanical engineering. 
               Xylo combines quantum computing with advanced robotics to create
@@ -153,117 +150,305 @@ export default function HeroSection() {
               initial="initial"
               animate="animate"
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex gap-4"
+              className="flex gap-6"
             >
-              <button className="group relative px-8 py-3 bg-[#00ff00] text-black font-bold rounded-full hover:bg-[#00cc00] transition-colors duration-300">
+              <button 
+                onClick={scrollToModel}
+                className="group relative px-8 py-4 bg-green-500 text-black font-medium rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300"
+              >
                 <span className="relative z-10">Explore Now</span>
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-[#00ff00]/40"
-                  animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute inset-0 bg-green-400"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: 0 }}
+                  transition={{ duration: 0.3 }}
                 />
               </button>
-              <button className="px-8 py-3 border border-[#00ff00] text-[#00ff00] rounded-full hover:bg-[#00ff00]/10 transition-colors duration-300 relative overflow-hidden">
-                <span className="relative z-10">Watch Demo</span>
+              <button 
+                onClick={() => setIsVideoOpen(true)}
+                className="group px-8 py-4 border border-green-500/30 text-green-500 rounded-lg hover:bg-green-500/10 transition-colors duration-300"
+              >
+                Watch Demo
+              </button>
+            </motion.div>
+
+            {/* Key Highlights */}
+            <motion.div 
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="space-y-6"
+            >
+              <h3 className="text-green-500/70 text-sm font-mono tracking-wider">KEY CAPABILITIES</h3>
+              
+              {[
+                {
+                  title: "Quantum Processing",
+                  value: "1.21 PetaFLOPS",
+                  detail: "Real-time neural computation"
+                },
+                {
+                  title: "AI Integration",
+                  value: "Gen 4",
+                  detail: "Advanced cognitive systems"
+                },
+                {
+                  title: "Response Time",
+                  value: "0.001ms",
+                  detail: "Ultra-low latency"
+                }
+              ].map((item, index) => (
                 <motion.div
-                  className="absolute inset-0 bg-[#00ff00]/10"
-                  animate={{ 
-                    x: ['100%', '-100%'],
-                    opacity: [0, 1, 0],
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-              </button>
+                  key={item.title}
+                  className="group relative"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + (index * 0.1) }}
+                >
+                  {/* Highlight bar */}
+                  <div className="absolute -left-4 top-0 bottom-0 w-1 bg-green-500/20 group-hover:bg-green-500/40 transition-colors duration-300" />
+                  
+                  <div className="pl-4 border-b border-green-500/10 pb-4 group-hover:border-green-500/30 transition-colors duration-300">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <h4 className="text-gray-400 font-mono text-sm">{item.title}</h4>
+                      <span className="text-green-500 font-bold font-mono">{item.value}</span>
+                    </div>
+                    <p className="text-gray-500 text-sm">{item.detail}</p>
+                  </div>
+
+                  {/* Hover animation */}
+                  <motion.div
+                    className="absolute inset-0 bg-green-500/5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={false}
+                    animate={{ opacity: [0, 0.1, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </motion.div>
+              ))}
+
+              {/* Bottom accent */}
+              <div className="h-px bg-gradient-to-r from-green-500/30 to-transparent" />
             </motion.div>
           </div>
 
           {/* Right Column - 3D Model Display */}
             <motion.div
+              ref={modelRef}
               variants={fadeInUp}
               initial="initial"
               animate="animate"
               transition={{ duration: 0.6, delay: 0.6 }}
-            className="relative h-[600px] rounded-2xl overflow-hidden group"
-          >
+              className="relative h-[700px] rounded-2xl overflow-hidden"
+            >
+            {/* Model container styling updates */}
+            <div className="absolute inset-0 bg-[#021002] rounded-2xl border border-green-500/20">
             {/* Animated corner accents */}
             {['top-0 left-0', 'top-0 right-0', 'bottom-0 left-0', 'bottom-0 right-0'].map((position, i) => (
-              <div key={i} className={`absolute ${position} w-8 h-8 pointer-events-none`}>
-                <div className="absolute inset-0 border-[#00ff00]/30">
-                  <div className={`absolute ${i < 2 ? 'top-0' : 'bottom-0'} ${i % 2 === 0 ? 'left-0' : 'right-0'} w-full h-[1px] bg-[#00ff00]/30`} />
-                  <div className={`absolute ${i % 2 === 0 ? 'left-0' : 'right-0'} h-full w-[1px] bg-[#00ff00]/30`} />
+                <motion.div
+                  key={i}
+                  className={`absolute ${position} w-24 h-24`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 + (i * 0.1) }}
+                >
+                  <div className={`absolute ${i < 2 ? 'top-0' : 'bottom-0'} ${i % 2 === 0 ? 'left-0' : 'right-0'} w-full h-[2px] bg-gradient-to-r from-green-500/50 to-transparent`} />
+                  <div className={`absolute ${i % 2 === 0 ? 'left-0' : 'right-0'} h-full w-[2px] bg-gradient-to-b from-green-500/50 to-transparent`} />
+                </motion.div>
+              ))}
+
+              {/* Enhanced background effects */}
+              <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_20%,rgba(0,20,0,0.8)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,255,0,0.03)_1.5px,transparent_1.5px)] bg-[size:20px_20px]" />
+              </div>
+
+              {/* Scanning line effect */}
+            <motion.div 
+                className="absolute inset-0 pointer-events-none"
+              animate={{ 
+                  background: [
+                    'linear-gradient(transparent 0%, rgba(0,255,0,0.1) 50%, transparent 100%) 0 0/100% 200%',
+                    'linear-gradient(transparent 0%, rgba(0,255,0,0.1) 50%, transparent 100%) 0 -200%/100% 200%'
+                  ]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              />
+
+              {/* Stats overlay at the bottom */}
+              <div className="absolute bottom-0 left-0 right-0">
+                <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
+                
+                <div className="bg-black/40 backdrop-blur-md">
+                  <div className="grid grid-cols-2 gap-4 p-6">
+                    {[
+                      { 
+                        label: 'Processing Power',
+                        value: '1.21',
+                        suffix: 'PF',
+                        countTo: 1.21,
+                        decimals: 2,
+                        icon: (
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M22 12A10 10 0 1 1 12 2" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="12" cy="12" r="4" strokeWidth="1.5" />
+                          </svg>
+                        )
+                      },
+                      { 
+                        label: 'Quantum States',
+                        value: '1024',
+                        suffix: 'Q',
+                        countTo: 1024,
+                        icon: (
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 3C16.9706 3 21 7.02944 21 12" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M12 21C7.02944 21 3 16.9706 3 12" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M12 12L18 6M12 12L6 18" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="12" cy="12" r="1" fill="currentColor" />
+                          </svg>
+                        )
+                      },
+                      { 
+                        label: 'Response Time',
+                        value: '0.001',
+                        suffix: 'ms',
+                        countTo: 0.001,
+                        decimals: 3,
+                        icon: (
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 12C3 7.02944 7.02944 3 12 3" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M21 12C21 16.9706 16.9706 21 12 21" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M9 12L11 14L15 10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )
+                      },
+                      { 
+                        label: 'Learning Rate',
+                        value: '99.99',
+                        suffix: '%',
+                        countTo: 99.99,
+                        decimals: 2,
+                        icon: (
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 12H7L10 19L14 5L17 12H21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )
+                      }
+                    ].map((stat) => (
+                      <motion.div 
+                        key={stat.label}
+                        className="group relative rounded-lg overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 via-green-500/10 to-green-500/20 rounded-lg" />
+                        
+                        <div className="relative flex items-center gap-4 p-4 bg-black/40 m-[1px] rounded-[7px]">
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-green-500/20 blur-sm rounded-full" />
+                            <div className="relative w-10 h-10 rounded-full bg-black/40 border border-green-500/30 flex items-center justify-center text-green-500">
+                              {stat.icon}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-green-500/70 text-xs font-mono tracking-wider">{stat.label}</p>
+                            <p className="text-white font-bold tracking-wide font-mono">
+                              {useCountUp(stat.countTo, 2, stat.decimals)}{stat.suffix}
+                            </p>
+                          </div>
+
+                          <motion.div
+                            className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            initial={false}
+                            animate={{ opacity: [0, 0.1, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
 
-            {/* Enhanced glow effect border */}
-            <motion.div 
-              className="absolute -inset-[1px] bg-gradient-to-r from-[#00ff00]/50 via-[#00ff00]/20 to-[#00ff00]/50 rounded-2xl blur-sm"
-              animate={{ 
-                opacity: [0.3, 0.5, 0.3],
-                backgroundPosition: ['0% 0%', '100% 100%'],
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-            />
-            
-            {/* Main content container */}
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl rounded-2xl">
-              {/* Enhanced grid overlay effect */}
-              <div className="absolute inset-0">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
-              </div>
-
-              {/* Compact Rotation hint */}
+              {/* Model Controls Hint */}
               <motion.div 
-                className="absolute top-4 right-4 z-10 flex items-center gap-2 text-[#00ff00]/70 bg-black/40 px-3 py-2 rounded-md backdrop-blur-sm border border-[#00ff00]/10"
-                initial={{ opacity: 0, y: -10 }}
+                className="absolute top-4 right-4 space-y-1.5 hidden lg:block"
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 }}
               >
-                {/* Compact rotation icon */}
-                <div className="relative w-5 h-5">
+                {/* Hints Container */}
+                <div className="bg-black/40 backdrop-blur-md border border-green-500/20 rounded-lg p-3 w-44">
+                  {/* Header */}
+                  <div className="flex items-center gap-1.5 text-green-500/70 mb-2">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" 
+                        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className="text-[10px] font-mono tracking-wider">MODEL CONTROLS</span>
+                  </div>
+                  
+                  {/* Control Instructions */}
+                  <div className="space-y-1.5">
+                    {[
+                      { action: 'Rotate', key: 'Drag' },
+                      { action: 'Zoom', key: 'Scroll' },
+                      { action: 'Pan', key: 'Ctrl+Drag' },
+                    ].map((control) => (
+                      <div key={control.action} 
+                        className="flex items-center justify-between text-[10px] py-0.5"
+                      >
+                        <span className="text-gray-400 font-medium">{control.action}</span>
+                        <span className="font-mono text-green-500 bg-green-500/5 px-1.5 py-0.5 rounded border border-green-500/20">
+                          {control.key}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Subtle glow effect */}
                   <motion.div
-                    className="absolute inset-0 border border-[#00ff00]/10 rounded-full"
+                    className="absolute inset-0 rounded-lg"
+                    initial={false}
                     animate={{ 
-                      rotate: 360,
+                      boxShadow: [
+                        '0 0 0 0px rgba(0,255,0,0)',
+                        '0 0 0 1px rgba(0,255,0,0.1)',
+                        '0 0 0 0px rgba(0,255,0,0)',
+                      ],
                     }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                </div>
+
+                {/* Auto-rotate indicator */}
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-green-500/40">
+                  <motion.div
+                    animate={{ rotate: 360 }}
                     transition={{ 
                       duration: 3,
                       repeat: Infinity,
-                      ease: "linear",
+                      ease: "linear"
                     }}
-                  />
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5"
-                    className="w-5 h-5 relative z-10"
+                    className="w-2.5 h-2.5"
                   >
-                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.83 6.72 2.24" />
-                    <path d="M21 3v4h-4" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.83 6.72 2.24" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M21 3v4h-4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
+                  </motion.div>
+                  <span className="font-mono tracking-wide">Auto-rotating</span>
                 </div>
-
-                <div>
-                  <p className="text-xs font-mono tracking-wide">ROTATE MODEL</p>
-                </div>
-
-                {/* Subtle pulse effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-md border border-[#00ff00]/10"
-                  animate={{ 
-                    opacity: [0.2, 0, 0.2],
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
               </motion.div>
 
+              {/* 3D Canvas */}
               <Canvas
                 camera={{ 
                   position: [320, 160, 320],
@@ -288,100 +473,14 @@ export default function HeroSection() {
                   minPolarAngle={Math.PI / 4}
                 />
               </Canvas>
-
-              {/* Enhanced Stats Overlay */}
-              <div className="absolute bottom-0 left-0 right-0">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent backdrop-blur-lg" />
-                
-                <div className="relative p-6 space-y-4">
-                  {/* Hexagonal grid background */}
-                  <div className="absolute inset-0 opacity-10">
-                    <div className="w-full h-full" style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 L15 0 L45 0 L60 30 L45 60 L15 60' stroke='%2300ff00' fill='none' /%3E%3C/svg%3E")`,
-                      backgroundSize: '30px 30px'
-                    }} />
-                  </div>
-
-                  {/* Enhanced top accent line */}
-                  <div className="absolute top-0 left-0 right-0">
-                    <div className="h-px bg-gradient-to-r from-transparent via-[#00ff00]/30 to-transparent" />
-                    <div className="h-px mt-1 bg-gradient-to-r from-transparent via-[#00ff00]/10 to-transparent" />
-                  </div>
-
-                  {/* Scanning line effect */}
-                  <motion.div
-                    className="absolute left-0 right-0"
-                    animate={{
-                      top: ['0%', '100%'],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: 'linear'
-                    }}
-                  >
-                    <div className="h-px bg-[#00ff00]/50" />
-                    <div className="h-20 bg-gradient-to-b from-[#00ff00]/5 to-transparent" />
-                  </motion.div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                      { label: 'Processing Power', value: '1.21 PetaFLOPS', icon: icons.processing },
-                      { label: 'Quantum States', value: '1024 Qubits', icon: icons.quantum },
-                      { label: 'Response Time', value: '0.001ms', icon: icons.response },
-                      { label: 'Learning Rate', value: '99.99%', icon: icons.learning }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    variants={fadeInUp}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ duration: 0.6, delay: 0.2 * index }}
-                        className="group relative"
-                      >
-                        {/* Card Background */}
-                        <div className="absolute inset-0 bg-black/40 rounded-lg border border-[#00ff00]/10 transition-colors duration-300 group-hover:border-[#00ff00]/30" />
-                        
-                        {/* Glowing corner accents */}
-                        <div className="absolute inset-0">
-                          <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#00ff00]/30" />
-                          <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#00ff00]/30" />
-                          <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#00ff00]/30" />
-                          <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#00ff00]/30" />
-                        </div>
-
-                        {/* Content */}
-                        <div className="relative p-4 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="text-[#00ff00]/70 group-hover:text-[#00ff00] transition-colors duration-300">
-                              {stat.icon}
-                            </div>
-                            <p className="text-[#00ff00]/70 text-sm font-mono tracking-wider group-hover:text-[#00ff00] transition-colors duration-300">
-                              {stat.label}
-                            </p>
-                          </div>
-                          <p className="text-white font-orbitron tracking-wider group-hover:text-[#00ff00] transition-colors duration-300">
-                            {stat.value}
-                          </p>
-                        </div>
-
-                        {/* Hover effects */}
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#00ff00]/5 to-transparent rounded-lg blur-sm" />
-                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#00ff00]/5" />
-                        </div>
-                  </motion.div>
-                ))}
-              </div>
-                </div>
-              </div>
             </div>
             </motion.div>
         </div>
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent" />
+      <VideoDialog 
+        isOpen={isVideoOpen}
+        onClose={() => setIsVideoOpen(false)}
+      />
     </section>
   );
 } 
